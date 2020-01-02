@@ -9,7 +9,7 @@ export class Walls {
     this.width = width;
     this.height = height;
     const numWalls = width * height * 2;
-    this.walls = new Array<boolean>(numWalls).fill(false);
+    this.walls = new Array<boolean>(numWalls).fill(true);
   }
 
   hasWall = (x: number, y: number, dir: Direction): boolean => {
@@ -65,7 +65,7 @@ export class Walls {
   };
 
   indexToCoordinate = (index: number): Coordinate => {
-    const y = index / this.width;
+    const y = Math.floor(index / this.width);
     return {
       x: index - y * this.width,
       y,
@@ -73,9 +73,9 @@ export class Walls {
   };
 
   wallToCoords = (
-    wall: number
+    wallId: number
   ): { coordinate: Coordinate; direction: Direction } => ({
-    coordinate: this.indexToCoordinate(wall / 2),
-    direction: wall % 2 === 0 ? Direction.NORTH : Direction.EAST,
+    coordinate: this.indexToCoordinate(Math.floor(wallId / 2)),
+    direction: wallId % 2 === 0 ? Direction.NORTH : Direction.EAST,
   });
 }

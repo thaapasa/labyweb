@@ -6,7 +6,7 @@ import { LabyrinthRenderer } from './LabyrinthRenderer';
 const getWindowSize = (): Size => ({
   width: window.innerWidth,
   height: window.innerHeight,
-  pixelRatio: window.devicePixelRatio,
+  pixelRatio: window.devicePixelRatio || 1,
 });
 
 const App: React.FC = () => {
@@ -17,7 +17,7 @@ const App: React.FC = () => {
     return () => window.removeEventListener('resize', listener);
   }, []);
   return (
-    <Container>
+    <Container data-testid="container">
       <LabyrinthRenderer {...size} />
       <SizeContainer>
         {size.width * size.pixelRatio} x {size.height * size.pixelRatio}
@@ -48,7 +48,8 @@ const SizeContainer = styled.div`
   color: black;
   font-size: 1.5rem;
   font-weight: bold;
-  text-shadow: 1pt 1pt 4pt rgba(255, 255, 255, 0.4);
+  text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 35px #fff,
+    0 0 40px #fff, 0 0 45px #fff;
   z-index: 1;
 `;
 
