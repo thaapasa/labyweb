@@ -17,4 +17,3 @@ export function shuffle<T>(l: T[]): T[] {
   }
   return l;
 }
-

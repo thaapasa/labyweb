@@ -13,16 +13,18 @@ const App: React.FC = () => {
   const [size, setSize] = React.useState<Size>(getWindowSize());
   React.useEffect(() => {
     const listener = () => setSize(getWindowSize());
-    window.addEventListener("resize", listener);
-    return () => window.removeEventListener("resize", listener);   
+    window.addEventListener('resize', listener);
+    return () => window.removeEventListener('resize', listener);
   }, []);
   return (
     <Container>
       <LabyrinthRenderer {...size} />
-      <SizeContainer>{size.width * size.pixelRatio} x {size.height * size.pixelRatio}</SizeContainer>
+      <SizeContainer>
+        {size.width * size.pixelRatio} x {size.height * size.pixelRatio}
+      </SizeContainer>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   position: fixed;
@@ -46,7 +48,7 @@ const SizeContainer = styled.div`
   color: black;
   font-size: 1.5rem;
   font-weight: bold;
-  text-shadow: 1pt 1pt 4pt rgba(255,255,255,0.4);
+  text-shadow: 1pt 1pt 4pt rgba(255, 255, 255, 0.4);
   z-index: 1;
 `;
 

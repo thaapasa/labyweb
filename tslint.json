@@ -1,0 +1,21 @@
+{
+  "extends": [
+    "tslint:recommended",
+    "tslint-plugin-prettier",
+    "tslint-config-prettier"
+  ],
+  "exclude": ["**/node_modules/**"],
+  "rules": {
+    "no-console": true,
+    "triple-equals": true,
+    "object-literal-sort-keys": false,
+    "interface-name": false,
+    "variable-name": false,
+    "no-shadowed-variable": true,
+    "jsx-no-lambda": false,
+    "jsx-no-string-ref": false,
+    "member-access": [true, "no-public"],
+    "prefer-const": true,
+    "prettier": true
+  }
+}
