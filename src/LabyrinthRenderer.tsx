@@ -14,20 +14,36 @@ function renderLabyrinth(
     return;
   }
 
-  ctx.clearRect(0, 0, width, height);
-  ctx.fillStyle = '#000000';
+  const imageData = ctx.createImageData(width, height);
+  const data = imageData.data;
+
+  // Fill white
+  data.fill(255);
+
+  const setPixel = (x: number, y: number) => {
+    const i = (y * width + x) * 4;
+    data[i] = 0;
+    data[i + 1] = 0;
+    data[i + 2] = 0;
+    // Alpha is already 255
+  };
+
   for (let x = 0; x < labyrinth.width; ++x) {
     for (let y = 0; y < labyrinth.height; ++y) {
       const xx = x * 2;
       const yy = y * 2;
       if (labyrinth.hasWall(x, y, Direction.SOUTH)) {
-        ctx.fillRect(xx, yy + 1, 2, 1);
+        setPixel(xx, yy + 1);
+        setPixel(xx + 1, yy + 1);
       }
       if (labyrinth.hasWall(x, y, Direction.EAST)) {
-        ctx.fillRect(xx + 1, yy, 1, 2);
+        setPixel(xx + 1, yy);
+        setPixel(xx + 1, yy + 1);
       }
     }
   }
+
+  ctx.putImageData(imageData, 0, 0);
 }
 
 export const LabyrinthRenderer: FC<Size> = ({
