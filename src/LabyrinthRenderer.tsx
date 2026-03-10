@@ -15,17 +15,16 @@ function renderLabyrinth(
   }
 
   const imageData = ctx.createImageData(width, height);
-  const data = imageData.data;
+  const pixels = new Uint32Array(imageData.data.buffer);
 
-  // Fill white
-  data.fill(255);
+  // 0xFFFFFFFF = white (ABGR on little-endian)
+  pixels.fill(0xffffffff);
+
+  // 0xFF000000 = opaque black (ABGR on little-endian)
+  const black = 0xff000000;
 
   const setPixel = (x: number, y: number) => {
-    const i = (y * width + x) * 4;
-    data[i] = 0;
-    data[i + 1] = 0;
-    data[i + 2] = 0;
-    // Alpha is already 255
+    pixels[y * width + x] = black;
   };
 
   for (let x = 0; x < labyrinth.width; ++x) {
