@@ -8,8 +8,7 @@ yarn build      # Type-check (tsc -b) + production build
 yarn lint       # ESLint
 ```
 
-No test runner is currently configured. Test files exist (`src/data/*.test.ts`)
-but are excluded from `tsconfig.json` and have no script to run them.
+No test runner is currently configured.
 
 ## Architecture
 
@@ -34,7 +33,7 @@ native device resolution (1-to-1 pixel mapping using `devicePixelRatio`).
 
 ## Conventions
 
-- Styled-components for component styling; global resets in `index.css`.
+- Plain CSS in `index.css` for all styling (no CSS-in-JS).
 - Functional components with hooks (`FC<Props>`, named imports from `react`).
 - PascalCase files for classes/components, camelCase for utility modules.
 - Prettier: 2-space indent, single quotes, semicolons, ES5 trailing commas.

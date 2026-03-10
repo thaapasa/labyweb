@@ -4,12 +4,6 @@ export interface Size {
   pixelRatio: number;
 }
 
-export const Size0: Size = {
-  width: 0,
-  height: 0,
-  pixelRatio: 1,
-};
-
 export enum Direction {
   NORTH,
   EAST,

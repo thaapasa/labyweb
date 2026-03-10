@@ -1,5 +1,4 @@
 import { useEffect, useState, type FC } from 'react';
-import styled from 'styled-components';
 import { Size } from './data/types';
 import { LabyrinthRenderer } from './LabyrinthRenderer';
 
@@ -17,40 +16,13 @@ const App: FC = () => {
     return () => window.removeEventListener('resize', listener);
   }, []);
   return (
-    <Container data-testid="container">
+    <div className="container">
       <LabyrinthRenderer {...size} />
-      <SizeContainer>
+      <div className="size-display">
         {size.width * size.pixelRatio} x {size.height * size.pixelRatio}
-      </SizeContainer>
-    </Container>
+      </div>
+    </div>
   );
 };
-
-const Container = styled.div`
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  overflow: hidden;
-`;
-
-const SizeContainer = styled.div`
-  position: absolute;
-  display: flex;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  color: black;
-  font-size: 1.5rem;
-  font-weight: bold;
-  text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 35px #fff,
-    0 0 40px #fff, 0 0 45px #fff;
-  z-index: 1;
-`;
 
 export default App;
