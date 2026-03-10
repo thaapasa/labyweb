@@ -19,9 +19,9 @@ export class Labyrinth {
 
   private createLabyrinth() {
     const numRooms = this.width * this.height;
-    const rooms: Record<number, number> = {};
+    const parent = new Int32Array(numRooms).fill(-1);
+    const rank = new Uint8Array(numRooms);
 
-    // A bit too much, but so what
     const numWalls = numRooms * 2;
 
     const inRange = (c: Coordinate) =>
@@ -29,47 +29,46 @@ export class Labyrinth {
 
     const roomId = (c: Coordinate) => c.y * this.width + c.x;
 
-    const findRoot = (c: number): number => {
-      let room = c;
-      while (rooms[room] !== undefined) {
-        room = rooms[room];
+    const find = (x: number): number => {
+      let root = x;
+      while (parent[root] !== -1) {
+        root = parent[root];
       }
-      return room;
+      // Path compression
+      while (parent[x] !== -1) {
+        const next = parent[x];
+        parent[x] = root;
+        x = next;
+      }
+      return root;
     };
 
-    const shortenPath = (c: number, parent: number): void => {
-      let cur = c;
-      while (rooms[cur] !== undefined) {
-        const old = cur;
-        rooms[cur] = parent;
-        cur = rooms[old];
-      }
-    };
-
-    // Punctures the i'th wall, if the rooms are not already connected
     const punctureWall = (i: number) => {
       const { coordinate: r1, direction: dir } = this.walls.wallToCoords(i);
       const r2 = coordinateTo(r1, dir);
 
       if (inRange(r1) && inRange(r2)) {
-        // Find rooms that the wall connects
-        const r1i = roomId(r1);
-        const r2i = roomId(r2);
-        // Find roots of each room tree
-        const r1Parent = findRoot(r1i);
-        const r2Parent = findRoot(r2i);
-        // If rooms are in different trees, then break the wall & connect room trees
-        if (r1Parent !== r2Parent) {
+        const root1 = find(roomId(r1));
+        const root2 = find(roomId(r2));
+        if (root1 !== root2) {
           this.walls.clearWallId(i);
-          rooms[r2Parent] = r1Parent;
+          // Union by rank
+          if (rank[root1] < rank[root2]) {
+            parent[root1] = root2;
+          } else if (rank[root1] > rank[root2]) {
+            parent[root2] = root1;
+          } else {
+            parent[root2] = root1;
+            rank[root1]++;
+          }
         }
-        // Shorten root paths (moves all room tree leafs on search path directly under the root)
-        shortenPath(r1i, r1Parent);
-        shortenPath(r2i, r1Parent);
       }
     };
 
-    const wallOrder = new Array<number>(numWalls).fill(0).map((_, i) => i);
+    const wallOrder = new Uint32Array(numWalls);
+    for (let i = 0; i < numWalls; i++) {
+      wallOrder[i] = i;
+    }
     shuffle(wallOrder);
     wallOrder.forEach(punctureWall);
   }
