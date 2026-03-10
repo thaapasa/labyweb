@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { createRef, useMemo, useEffect, type FC } from 'react';
 import styled from 'styled-components';
 import { Labyrinth } from './data/Labyrinth';
 import { Direction, Size } from './data/types';
@@ -34,6 +34,7 @@ function renderLabyrinth(
     return;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const ctxAny = ctx as any;
   const bsr =
     ctxAny.webkitBackingStorePixelRatio ||
@@ -59,18 +60,18 @@ function renderLabyrinth(
   }
 }
 
-export const LabyrinthRenderer: React.FC<Size> = ({
+export const LabyrinthRenderer: FC<Size> = ({
   width,
   height,
   pixelRatio,
 }) => {
-  const ref = React.createRef<HTMLCanvasElement>();
+  const ref = createRef<HTMLCanvasElement>();
   const cw = width * pixelRatio;
   const ch = height * pixelRatio;
   const lw = Math.floor(cw / 2);
   const lh = Math.floor(ch / 2);
-  const labyrinth = React.useMemo(() => new Labyrinth(lw, lh), [lw, lh]);
-  React.useEffect(() =>
+  const labyrinth = useMemo(() => new Labyrinth(lw, lh), [lw, lh]);
+  useEffect(() =>
     ref.current
       ? renderLabyrinth(ref.current, cw, ch, labyrinth, pixelRatio)
       : undefined

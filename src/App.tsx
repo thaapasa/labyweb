@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect, useState, type FC } from 'react';
 import styled from 'styled-components';
 import { Size } from './data/types';
 import { LabyrinthRenderer } from './LabyrinthRenderer';
@@ -9,9 +9,9 @@ const getWindowSize = (): Size => ({
   pixelRatio: window.devicePixelRatio || 1,
 });
 
-const App: React.FC = () => {
-  const [size, setSize] = React.useState<Size>(getWindowSize());
-  React.useEffect(() => {
+const App: FC = () => {
+  const [size, setSize] = useState<Size>(getWindowSize());
+  useEffect(() => {
     const listener = () => setSize(getWindowSize());
     window.addEventListener('resize', listener);
     return () => window.removeEventListener('resize', listener);

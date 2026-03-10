@@ -1,9 +1,19 @@
 /.idea
 *.iml
 bin
-build
+dist
 out
 *.log
+*.tsbuildinfo
 /.gradle
 node_modules
 /.vscode
+
+# Yarn Berry
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions

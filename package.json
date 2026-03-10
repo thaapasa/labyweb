@@ -1,53 +1,33 @@
 {
   "name": "labyweb",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
-  "dependencies": {
-    "@testing-library/jest-dom": "4.2.4",
-    "@testing-library/react": "9.4.0",
-    "@testing-library/user-event": "8.0.2",
-    "@types/jest": "24.0.25",
-    "@types/node": "13.1.2",
-    "@types/react": "16.9.17",
-    "@types/react-dom": "16.9.4",
-    "react": "16.12.0",
-    "react-dom": "16.12.0",
-    "react-scripts": "3.3.0",
-    "styled-components": "4.4.1",
-    "typescript": "3.7.4"
-  },
-  "homepage": "/labyrintti",
+  "type": "module",
+  "packageManager": "yarn@4.13.0+sha512.5c20ba010c99815433e5c8453112165e673f1c7948d8d2b267f4b5e52097538658388ebc9f9580656d9b75c5cc996f990f611f99304a2197d4c56d21eea370e7",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "clean": "rm -rf build/",
-    "lint": "tslint --project ."
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "clean": "rm -rf dist/",
+    "lint": "eslint ."
   },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "styled-components": "^6.1.14"
   },
   "devDependencies": {
-    "@types/styled-components": "4.4.1",
-    "prettier": "1.19.1",
-    "tslint": "5.20.1",
-    "tslint-config-prettier": "1.18.0",
-    "tslint-plugin-prettier": "2.1.0"
-  },
-  "resolutions": {
-    "serialize-javascript": "2.1.1"
+    "@eslint/js": "^9.21.0",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.21.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^15.15.0",
+    "prettier": "^3.5.3",
+    "typescript": "~5.7.3",
+    "typescript-eslint": "^8.24.1",
+    "vite": "^6.2.0"
   }
 }
