@@ -7,16 +7,13 @@ function pixelPerfectLine(
   x1: number,
   y1: number,
   x2: number,
-  y2: number,
-  pixelRatio: number
+  y2: number
 ) {
   ctx.beginPath();
-  ctx.lineWidth = pixelRatio;
-
-  const offs = pixelRatio / 2;
+  ctx.lineWidth = 1;
   ctx.strokeStyle = '#000000';
-  ctx.moveTo(x1 + offs, y1 + offs);
-  ctx.lineTo(x2 + offs, y2 + offs);
+  ctx.moveTo(x1 + 0.5, y1 + 0.5);
+  ctx.lineTo(x2 + 0.5, y2 + 0.5);
   ctx.stroke();
 }
 
@@ -24,8 +21,7 @@ function renderLabyrinth(
   canvas: HTMLCanvasElement,
   width: number,
   height: number,
-  labyrinth: Labyrinth,
-  pixelRatio: number
+  labyrinth: Labyrinth
 ) {
   const ctx = canvas.getContext('2d');
 
@@ -40,10 +36,10 @@ function renderLabyrinth(
       const xx = x * 2;
       const yy = y * 2;
       if (labyrinth.hasWall(x, y, Direction.SOUTH)) {
-        pixelPerfectLine(ctx, xx, yy + 1, xx + 1, yy + 1, pixelRatio);
+        pixelPerfectLine(ctx, xx, yy + 1, xx + 1, yy + 1);
       }
       if (labyrinth.hasWall(x, y, Direction.EAST)) {
-        pixelPerfectLine(ctx, xx + 1, yy, xx + 1, yy + 1, pixelRatio);
+        pixelPerfectLine(ctx, xx + 1, yy, xx + 1, yy + 1);
       }
     }
   }
@@ -62,9 +58,9 @@ export const LabyrinthRenderer: FC<Size> = ({
   const labyrinth = useMemo(() => new Labyrinth(lw, lh), [lw, lh]);
   useEffect(() => {
     if (ref.current) {
-      renderLabyrinth(ref.current, cw, ch, labyrinth, pixelRatio);
+      renderLabyrinth(ref.current, cw, ch, labyrinth);
     }
-  }, [cw, ch, labyrinth, pixelRatio]);
+  }, [cw, ch, labyrinth]);
   return (
     <canvas
       className="labyrinth-canvas"
