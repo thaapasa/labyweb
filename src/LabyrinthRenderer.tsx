@@ -1,6 +1,6 @@
-import { useRef, useMemo, useEffect, type FC } from 'react';
+import { useRef, useMemo, useEffect, useState, type FC } from 'react';
 import { Labyrinth } from './data/Labyrinth';
-import { Direction, Size } from './data/types';
+import { Direction } from './data/types';
 
 function renderLabyrinth(
   canvas: HTMLCanvasElement,
@@ -51,36 +51,95 @@ function renderLabyrinth(
   ctx.putImageData(imageData, 0, 0);
 }
 
-export const LabyrinthRenderer: FC<Size> = ({
-  width,
-  height,
-  pixelRatio,
-}) => {
+/**
+ * Uses ResizeObserver with devicePixelContentBox to get true physical
+ * pixel dimensions. Falls back to contentBoxSize × devicePixelRatio.
+ */
+function useDevicePixelSize(ref: React.RefObject<HTMLElement | null>) {
+  const [size, setSize] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    console.log(`Display info: devicePixelRatio=${dpr}, screen=${screen.width}×${screen.height}`);
+
+    let usingDevicePixelBox = false;
+
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        let w: number;
+        let h: number;
+        if (entry.devicePixelContentBoxSize?.length) {
+          w = entry.devicePixelContentBoxSize[0].inlineSize;
+          h = entry.devicePixelContentBoxSize[0].blockSize;
+          if (!usingDevicePixelBox) {
+            const cssW = entry.contentBoxSize[0].inlineSize;
+            const cssH = entry.contentBoxSize[0].blockSize;
+            console.log(
+              `Resolution: ${w}×${h} device pixels (CSS: ${cssW}×${cssH}, ` +
+                `effective DPR: ${(w / cssW).toFixed(3)}) via devicePixelContentBox`
+            );
+            usingDevicePixelBox = true;
+          }
+        } else {
+          w = Math.round(entry.contentBoxSize[0].inlineSize * dpr);
+          h = Math.round(entry.contentBoxSize[0].blockSize * dpr);
+          console.log(
+            `Resolution: ${w}×${h} (fallback: CSS × devicePixelRatio=${dpr})`
+          );
+        }
+        setSize({ width: w, height: h });
+      }
+    });
+
+    try {
+      observer.observe(el, { box: 'device-pixel-content-box' });
+    } catch {
+      console.log('devicePixelContentBox not supported, using content-box fallback');
+      observer.observe(el, { box: 'content-box' });
+    }
+
+    return () => observer.disconnect();
+  }, [ref]);
+
+  return size;
+}
+
+export const LabyrinthRenderer: FC = () => {
   const ref = useRef<HTMLCanvasElement>(null);
-  const cw = width * pixelRatio;
-  const ch = height * pixelRatio;
+  const { width: cw, height: ch } = useDevicePixelSize(ref);
   const lw = Math.floor((cw - 1) / 2);
   const lh = Math.floor((ch - 1) / 2);
+
   const labyrinth = useMemo(() => {
+    if (lw <= 0 || lh <= 0) return null;
     const t0 = performance.now();
     const l = new Labyrinth(lw, lh);
-    console.log(`Labyrinth generation: ${(performance.now() - t0).toFixed(1)}ms (${lw}×${lh})`);
+    console.log(
+      `Labyrinth generation: ${(performance.now() - t0).toFixed(1)}ms (${lw}×${lh})`
+    );
     return l;
   }, [lw, lh]);
+
   useEffect(() => {
-    if (ref.current) {
+    const canvas = ref.current;
+    if (canvas && labyrinth && cw > 0 && ch > 0) {
+      canvas.width = cw;
+      canvas.height = ch;
       const t0 = performance.now();
-      renderLabyrinth(ref.current, cw, ch, labyrinth);
-      console.log(`Labyrinth render: ${(performance.now() - t0).toFixed(1)}ms (${cw}×${ch})`);
+      renderLabyrinth(canvas, cw, ch, labyrinth);
+      console.log(
+        `Labyrinth render: ${(performance.now() - t0).toFixed(1)}ms (${cw}×${ch})`
+      );
     }
   }, [cw, ch, labyrinth]);
+
   return (
-    <canvas
-      className="labyrinth-canvas"
-      ref={ref}
-      style={{ width, height }}
-      width={cw}
-      height={ch}
-    />
+    <>
+      <canvas className="labyrinth-canvas" ref={ref} />
+      <div className="size-display">{cw} × {ch}</div>
+    </>
   );
 };

@@ -1,9 +1,3 @@
-export interface Size {
-  width: number;
-  height: number;
-  pixelRatio: number;
-}
-
 export enum Direction {
   NORTH,
   EAST,
