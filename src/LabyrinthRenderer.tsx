@@ -55,10 +55,17 @@ export const LabyrinthRenderer: FC<Size> = ({
   const ch = height * pixelRatio;
   const lw = Math.floor(cw / 2);
   const lh = Math.floor(ch / 2);
-  const labyrinth = useMemo(() => new Labyrinth(lw, lh), [lw, lh]);
+  const labyrinth = useMemo(() => {
+    const t0 = performance.now();
+    const l = new Labyrinth(lw, lh);
+    console.log(`Labyrinth generation: ${(performance.now() - t0).toFixed(1)}ms (${lw}×${lh})`);
+    return l;
+  }, [lw, lh]);
   useEffect(() => {
     if (ref.current) {
+      const t0 = performance.now();
       renderLabyrinth(ref.current, cw, ch, labyrinth);
+      console.log(`Labyrinth render: ${(performance.now() - t0).toFixed(1)}ms (${cw}×${ch})`);
     }
   }, [cw, ch, labyrinth]);
   return (
