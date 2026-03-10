@@ -17,27 +17,33 @@ function renderLabyrinth(
   const imageData = ctx.createImageData(width, height);
   const pixels = new Uint32Array(imageData.data.buffer);
 
-  // 0xFFFFFFFF = white (ABGR on little-endian)
   pixels.fill(0xffffffff);
 
-  // 0xFF000000 = opaque black (ABGR on little-endian)
   const black = 0xff000000;
 
   const setPixel = (x: number, y: number) => {
     pixels[y * width + x] = black;
   };
 
-  for (let x = 0; x < labyrinth.width; ++x) {
-    for (let y = 0; y < labyrinth.height; ++y) {
-      const xx = x * 2;
-      const yy = y * 2;
-      if (labyrinth.hasWall(x, y, Direction.SOUTH)) {
-        setPixel(xx, yy + 1);
-        setPixel(xx + 1, yy + 1);
+  const lw = labyrinth.width;
+  const lh = labyrinth.height;
+
+  // Top border (row 0)
+  for (let px = 0; px <= 2 * lw; px++) setPixel(px, 0);
+  // Left border (column 0)
+  for (let py = 1; py <= 2 * lh; py++) setPixel(0, py);
+
+  for (let x = 0; x < lw; ++x) {
+    for (let y = 0; y < lh; ++y) {
+      // Corner — always black (a spanning tree cannot have a 4-cell cycle)
+      setPixel(2 * x + 2, 2 * y + 2);
+      // Wall below on screen = NORTH wall (toward y+1 in labyrinth)
+      if (labyrinth.hasWall(x, y, Direction.NORTH)) {
+        setPixel(2 * x + 1, 2 * y + 2);
       }
+      // Wall right on screen = EAST wall
       if (labyrinth.hasWall(x, y, Direction.EAST)) {
-        setPixel(xx + 1, yy);
-        setPixel(xx + 1, yy + 1);
+        setPixel(2 * x + 2, 2 * y + 1);
       }
     }
   }
@@ -53,8 +59,8 @@ export const LabyrinthRenderer: FC<Size> = ({
   const ref = useRef<HTMLCanvasElement>(null);
   const cw = width * pixelRatio;
   const ch = height * pixelRatio;
-  const lw = Math.floor(cw / 2);
-  const lh = Math.floor(ch / 2);
+  const lw = Math.floor((cw - 1) / 2);
+  const lh = Math.floor((ch - 1) / 2);
   const labyrinth = useMemo(() => {
     const t0 = performance.now();
     const l = new Labyrinth(lw, lh);
